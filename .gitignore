@@ -22,6 +22,7 @@ dist-ssr
 # Local agent and test artifacts
 .agents/
 .playwright-mcp/
+.vercel/
 tmp/
 supabase/.temp/
 
