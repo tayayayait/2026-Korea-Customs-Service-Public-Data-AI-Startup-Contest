@@ -22,6 +22,20 @@ Phase 4 hardening checklist for demo and deployment.
 
 Open `/readiness` in the local app. It reports pass, warning, or blocked status without exposing secret values.
 
+## Vercel Deployment
+
+- The Vite config forces Nitro's `vercel` preset so TanStack Start SSR routes and server functions are deployed as Vercel server output instead of static-only Vite assets.
+- Set the required server environment variables in Vercel Project Settings before relying on the production deployment:
+  - `GEMINI_PROVIDER`
+  - Developer API mode: `GEMINI_API_KEY`
+  - Vertex AI mode: `GOOGLE_VERTEX_PROJECT`, `GOOGLE_VERTEX_LOCATION`, `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, and optional `GOOGLE_PRIVATE_KEY_ID`
+  - `DATA_GO_KR_API_KEY`
+  - `SUPABASE_URL`
+  - `SUPABASE_PUBLISHABLE_KEY`
+  - Optional: `FOODSAFETY_KOREA_API_KEY`, `UNIPASS_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `GOOGLE_VERTEX_AUTH_MODE=gcloud` is for local demos only. Do not use it on Vercel because the production runtime does not provide the local `gcloud` CLI session.
+- Do not set `DATA_GO_KR_API_KEY`, `GEMINI_API_KEY`, `UNIPASS_API_KEY`, or `SUPABASE_SERVICE_ROLE_KEY` with a `VITE_` prefix.
+
 ## Known Non-Blocking Warnings
 
 - UI library files still emit `react-refresh/only-export-components` warnings.

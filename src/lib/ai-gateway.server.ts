@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createVertex } from "@ai-sdk/google-vertex";
+import { createVertex as createEdgeVertex } from "@ai-sdk/google-vertex/edge";
 
 export const DEFAULT_GEMINI_MODEL = "gemini-3-flash-preview";
 export const DEFAULT_VERTEX_LOCATION = "us-central1";
@@ -13,6 +14,12 @@ export type AiGatewayConfig = {
   vertexProject?: string;
   vertexLocation?: string;
   vertexAuthMode?: string;
+};
+
+const require = createRequire(import.meta.url);
+
+const createNodeVertex = (): typeof import("@ai-sdk/google-vertex")["createVertex"] => {
+  return (require("@ai-sdk/google-vertex") as typeof import("@ai-sdk/google-vertex")).createVertex;
 };
 
 export function createGeminiProvider(geminiApiKey: string) {
@@ -61,15 +68,15 @@ export function createAiGateway(config: AiGatewayConfig) {
       throw new Error("Missing GOOGLE_VERTEX_PROJECT");
     }
 
+    const useGcloudAuth = config.vertexAuthMode?.toLowerCase() === "gcloud";
+    const createVertex = useGcloudAuth ? createNodeVertex() : createEdgeVertex;
+
     return {
       provider,
       model: createVertex({
         project: config.vertexProject,
         location: config.vertexLocation ?? DEFAULT_VERTEX_LOCATION,
-        headers:
-          config.vertexAuthMode?.toLowerCase() === "gcloud"
-            ? createGcloudVertexHeaders()
-            : undefined,
+        headers: useGcloudAuth ? createGcloudVertexHeaders() : undefined,
       }),
     };
   }

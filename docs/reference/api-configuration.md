@@ -14,6 +14,9 @@ Set secrets in `.env`. Do not expose these values through `VITE_` variables.
 | `GOOGLE_VERTEX_PROJECT`     | Conditional | Required only when `GEMINI_PROVIDER=vertex`; Google Cloud project id used for Vertex AI billing and quota                                          |
 | `GOOGLE_VERTEX_LOCATION`    |          No | Vertex AI region. Default is `us-central1`                                                                                                         |
 | `GOOGLE_VERTEX_AUTH_MODE`   |          No | Vertex AI auth mode. `adc` uses Application Default Credentials; `gcloud` uses the active `gcloud auth print-access-token` account for local demos |
+| `GOOGLE_CLIENT_EMAIL`       | Conditional | Required on Vercel when `GEMINI_PROVIDER=vertex`; service account client email for the Vertex AI edge provider                                     |
+| `GOOGLE_PRIVATE_KEY`        | Conditional | Required on Vercel when `GEMINI_PROVIDER=vertex`; service account private key for the Vertex AI edge provider                                      |
+| `GOOGLE_PRIVATE_KEY_ID`     |          No | Optional service account private key id for the Vertex AI edge provider                                                                            |
 | `DATA_GO_KR_API_KEY`        |         Yes | Data.go.kr service key for Korea Customs Service and MFDS APIs                                                                                     |
 | `FOODSAFETY_KOREA_API_KEY`  |          No | FoodSafetyKorea OpenAPI key for I2715 blocked overseas direct purchase food lookup                                                                 |
 | `UNIPASS_API_KEY`           |          No | UNI-PASS cargo clearance progress lookup key                                                                                                       |
@@ -75,6 +78,7 @@ The cargo screen keeps the UNI-PASS field names aligned with the local OpenAPI g
 - Keep API keys in server-only environment variables.
 - Never send `DATA_GO_KR_API_KEY`, `FOODSAFETY_KOREA_API_KEY`, `GEMINI_API_KEY`, `UNIPASS_API_KEY`, or `SUPABASE_SERVICE_ROLE_KEY` to the browser.
 - Use `GEMINI_PROVIDER=vertex` when Gemini Developer API prepaid credits are depleted but Google Cloud billing credits are available. Vertex AI requires Application Default Credentials, service account credentials, or local `GOOGLE_VERTEX_AUTH_MODE=gcloud`.
+- On Vercel, do not use `GOOGLE_VERTEX_AUTH_MODE=gcloud`. Use service account environment variables (`GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, optional `GOOGLE_PRIVATE_KEY_ID`) or switch to `GEMINI_PROVIDER=developer` with `GEMINI_API_KEY`.
 - The local verified Vertex AI configuration is `GOOGLE_VERTEX_PROJECT=gen-lang-client-0563653718`, `GOOGLE_VERTEX_LOCATION=us-central1`, `GOOGLE_VERTEX_AUTH_MODE=gcloud`, and `GEMINI_MODEL=gemini-2.5-flash`.
 - Treat all tariff calculations as reference estimates.
 - Use `imexTpcd=2` and `weekFxrtTpcd=2` for import flows.
